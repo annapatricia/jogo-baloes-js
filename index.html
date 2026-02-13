@@ -1,93 +1,359 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>🎮 Acerte o Número!</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🎈 Estoure os Balões!</title>
 
-<style>
+  <style>
     body {
-        font-family: Arial, sans-serif;
-        background-color: #fce4ec;
-        text-align: center;
-        padding: 50px;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7fbff;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      touch-action: manipulation;
     }
 
-    .game-box {
-        background: white;
-        padding: 30px;
-        border-radius: 20px;
-        width: 300px;
-        margin: auto;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    /* Top bar */
+    .top {
+      position: fixed;
+      inset: 0 0 auto 0;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.9);
+      border-bottom: 1px solid #e8eef7;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+      backdrop-filter: blur(6px);
     }
 
-    h1 {
-        color: #e91e63;
+    .title {
+      font-weight: bold;
+      color: #1a237e;
     }
 
-    input {
-        padding: 10px;
-        font-size: 16px;
-        width: 80px;
-        text-align: center;
-        border-radius: 10px;
-        border: 1px solid #ccc;
+    .stats {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
-    button {
-        padding: 10px 20px;
-        margin-top: 10px;
-        font-size: 16px;
-        border: none;
-        border-radius: 10px;
-        background-color: #e91e63;
-        color: white;
-        cursor: pointer;
+    .pill {
+      background: #ffffff;
+      border: 1px solid #e8eef7;
+      border-radius: 999px;
+      padding: 8px 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      font-size: 14px;
     }
 
-    button:hover {
-        background-color: #c2185b;
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #1a73e8;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn:active { transform: scale(0.98); }
+
+    /* Game area */
+    #game {
+      position: absolute;
+      inset: 52px 0 0 0; /* espaço para o topo */
     }
 
-    #message {
-        margin-top: 15px;
-        font-weight: bold;
+    .balloon {
+      position: absolute;
+      width: 70px;
+      height: 90px;
+      border-radius: 50% 50% 45% 45%;
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.12);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 8px;
     }
-</style>
+
+    .balloon::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -12px;
+      width: 2px;
+      height: 26px;
+      background: rgba(0,0,0,0.25);
+      transform: translateX(-50%);
+    }
+
+    .shine {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 14px;
+      height: 28px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.65);
+      transform: rotate(-20deg);
+    }
+
+    /* Mensagens */
+    .center-msg {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #e8eef7;
+      border-radius: 18px;
+      padding: 18px 16px;
+      width: min(360px, 92vw);
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+      z-index: 20;
+      display: none;
+    }
+
+    .center-msg h2 {
+      margin: 0 0 8px 0;
+      color: #1a237e;
+      font-size: 20px;
+    }
+
+    .center-msg p { margin: 8px 0; }
+
+    .small {
+      font-size: 13px;
+      color: #455a64;
+    }
+
+    /* Rodapé discreto */
+    .foot {
+      position: fixed;
+      inset: auto 0 8px 0;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 9;
+    }
+    .foot span {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid #e8eef7;
+      color: #546e7a;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="top">
+    <div class="title">🎈 Estoure os Balões</div>
 
-<div class="game-box">
-    <h1>🎯 Acerte o Número!</h1>
-    <p>Escolha um número entre 1 e 10</p>
+    <div class="stats">
+      <div class="pill">⭐ Pontos: <b id="score">0</b></div>
+      <div class="pill">🎚️ Nível: <b id="level">1</b></div>
+      <div class="pill">⏱️ Velocidade: <b id="speed">1</b></div>
+      <button class="btn" id="btnStart">Começar</button>
+      <button class="btn" id="btnReset" style="background:#e53935;">Reiniciar</button>
+    </div>
+  </div>
 
-    <input type="number" id="guess" min="1" max="10">
-    <br>
-    <button onclick="checkGuess()">Tentar</button>
+  <div id="game" aria-label="Área do jogo"></div>
 
-    <p id="message"></p>
-</div>
+  <div class="center-msg" id="msgBox">
+    <h2 id="msgTitle">Vamos jogar!</h2>
+    <p id="msgText">Clique nos balões para fazer pontos 🎉</p>
+    <p class="small">Dica: se um balão escapar, você perde 1 ponto.</p>
+    <button class="btn" id="btnPlayNow">Jogar agora</button>
+  </div>
+
+  <div class="foot"><span>Funciona no PC e no celular (toque na tela).</span></div>
 
 <script>
-    let secretNumber = Math.floor(Math.random() * 10) + 1;
+  // ====== Estado do jogo ======
+  const game = document.getElementById("game");
+  const scoreEl = document.getElementById("score");
+  const levelEl = document.getElementById("level");
+  const speedEl = document.getElementById("speed");
 
-    function checkGuess() {
-        let guess = document.getElementById("guess").value;
-        let message = document.getElementById("message");
+  const msgBox = document.getElementById("msgBox");
+  const msgTitle = document.getElementById("msgTitle");
+  const msgText = document.getElementById("msgText");
 
-        if (guess == secretNumber) {
-            message.innerHTML = "🎉 Parabéns! Você acertou!";
-            message.style.color = "green";
-        } else if (guess < secretNumber) {
-            message.innerHTML = "📉 Muito baixo! Tente um número maior.";
-            message.style.color = "blue";
-        } else {
-            message.innerHTML = "📈 Muito alto! Tente um número menor.";
-            message.style.color = "orange";
-        }
+  const btnStart = document.getElementById("btnStart");
+  const btnReset = document.getElementById("btnReset");
+  const btnPlayNow = document.getElementById("btnPlayNow");
+
+  let score = 0;
+  let level = 1;
+
+  let spawnIntervalMs = 1200; // cria balões
+  let balloonLifeMs = 2200;   // tempo antes de "escapar"
+  let timerSpawn = null;
+  let running = false;
+
+  // Cores simples e alegres
+  const colors = ["#ff5252", "#ffca28", "#66bb6a", "#42a5f5", "#ab47bc", "#ff7043"];
+
+  function clamp(n, min, max) {
+    return Math.max(min, Math.min(max, n));
+  }
+
+  function updateUI() {
+    scoreEl.textContent = score;
+    levelEl.textContent = level;
+    // "speed" só para a criança sentir que aumenta (1..10)
+    const speed = clamp(Math.round((1200 - spawnIntervalMs) / 100) + 1, 1, 10);
+    speedEl.textContent = speed;
+  }
+
+  function showMessage(title, text) {
+    msgTitle.textContent = title;
+    msgText.textContent = text;
+    msgBox.style.display = "block";
+  }
+
+  function hideMessage() {
+    msgBox.style.display = "none";
+  }
+
+  function computeLevel() {
+    // sobe nível a cada 10 pontos (mínimo 1)
+    level = Math.max(1, Math.floor(score / 10) + 1);
+
+    // aumenta a dificuldade (mais balões e desaparecem mais rápido)
+    spawnIntervalMs = clamp(1200 - (level - 1) * 90, 420, 1200);
+    balloonLifeMs   = clamp(2200 - (level - 1) * 110, 650, 2200);
+  }
+
+  function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function createBalloon() {
+    if (!running) return;
+
+    const b = document.createElement("div");
+    b.className = "balloon";
+
+    // tamanho levemente variável
+    const size = randomInt(55, 85);
+    b.style.width = size + "px";
+    b.style.height = Math.round(size * 1.25) + "px";
+
+    // cor
+    const color = colors[randomInt(0, colors.length - 1)];
+    b.style.background = color;
+
+    // brilho
+    const shine = document.createElement("div");
+    shine.className = "shine";
+    b.appendChild(shine);
+
+    // posição (não encostar no topo)
+    const gw = game.clientWidth;
+    const gh = game.clientHeight;
+
+    const x = randomInt(10, Math.max(10, gw - size - 10));
+    const y = randomInt(20, Math.max(20, gh - Math.round(size * 1.25) - 10));
+
+    b.style.left = x + "px";
+    b.style.top  = y + "px";
+
+    let popped = false;
+
+    // Estourar: clique ou toque
+    function pop() {
+      if (popped) return;
+      popped = true;
+      score += 1;
+      computeLevel();
+      updateUI();
+      b.remove();
     }
-</script>
 
+    b.addEventListener("click", pop);
+    b.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+      pop();
+    }, { passive: false });
+
+    game.appendChild(b);
+
+    // Se não estourar a tempo, ele "escapa" e perde 1 ponto
+    setTimeout(() => {
+      if (!popped && b.isConnected) {
+        score -= 1;
+        computeLevel();
+        updateUI();
+        b.remove();
+      }
+    }, balloonLifeMs);
+  }
+
+  function startGame() {
+    if (running) return;
+    running = true;
+    hideMessage();
+
+    // cria um balão imediatamente e depois em intervalos
+    createBalloon();
+    timerSpawn = setInterval(createBalloon, spawnIntervalMs);
+
+    // Ajusta intervalos dinamicamente (observando mudanças de nível)
+    // Faz um "tick" que recalibra o setInterval quando a dificuldade muda
+    const adjustTick = setInterval(() => {
+      if (!running) {
+        clearInterval(adjustTick);
+        return;
+      }
+      // reconfigura se mudou
+      clearInterval(timerSpawn);
+      timerSpawn = setInterval(createBalloon, spawnIntervalMs);
+    }, 600);
+  }
+
+  function resetGame() {
+    running = false;
+    clearInterval(timerSpawn);
+    timerSpawn = null;
+
+    // limpa balões existentes
+    game.innerHTML = "";
+
+    score = 0;
+    level = 1;
+    spawnIntervalMs = 1200;
+    balloonLifeMs = 2200;
+
+    updateUI();
+    showMessage("🎈 Estoure os Balões!", "Clique nos balões antes que eles desapareçam!");
+  }
+
+  // Botões
+  btnStart.addEventListener("click", startGame);
+  btnPlayNow.addEventListener("click", startGame);
+  btnReset.addEventListener("click", resetGame);
+
+  // Inicia com uma mensagem
+  updateUI();
+  showMessage("🎈 Estoure os Balões!", "Clique nos balões antes que eles desapareçam!");
+
+  // Ajusta área do jogo em telas pequenas (já é automático, mas ajuda)
+  window.addEventListener("resize", () => {
+    // nada obrigatório aqui, só garante que está ok
+  });
+</script>
 </body>
 </html>
