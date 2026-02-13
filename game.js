@@ -1,3 +1,5 @@
+alert("game.js carregou!");
+
 const gameEl = document.getElementById("game");
 const scoreEl = document.getElementById("score");
 const timeEl  = document.getElementById("time");
