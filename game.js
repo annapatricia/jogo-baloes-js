@@ -211,3 +211,5 @@ playAgainBtn.addEventListener("click", () => {
 updateHUD();
 setButtons();
 bestScoreEl.textContent = String(localStorage.getItem(BEST_KEY) || "0");
+startGame();
+
