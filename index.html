@@ -1,52 +1,93 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Estoure os Balões 🎈</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<title>🎮 Acerte o Número!</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #fce4ec;
+        text-align: center;
+        padding: 50px;
+    }
+
+    .game-box {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        width: 300px;
+        margin: auto;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+        color: #e91e63;
+    }
+
+    input {
+        padding: 10px;
+        font-size: 16px;
+        width: 80px;
+        text-align: center;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        padding: 10px 20px;
+        margin-top: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 10px;
+        background-color: #e91e63;
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #c2185b;
+    }
+
+    #message {
+        margin-top: 15px;
+        font-weight: bold;
+    }
+</style>
 </head>
+
 <body>
-  <header class="top">
-    <h1>Estoure os Balões 🎈</h1>
 
-    <div class="hud">
-      <div class="pill">Pontos: <span id="score">0</span></div>
-      <div class="pill">Tempo: <span id="time">30</span>s</div>
-      <div class="pill">Nível: <span id="level">1</span></div>
-    </div>
+<div class="game-box">
+    <h1>🎯 Acerte o Número!</h1>
+    <p>Escolha um número entre 1 e 10</p>
 
-    <div class="controls">
-      <button id="startBtn">Começar</button>
-      <button id="pauseBtn" disabled>Pausar</button>
-      <button id="resetBtn">Reiniciar</button>
+    <input type="number" id="guess" min="1" max="10">
+    <br>
+    <button onclick="checkGuess()">Tentar</button>
 
-      <label class="toggle">
-        <input type="checkbox" id="soundToggle" checked />
-        <span>Som</span>
-      </label>
-    </div>
+    <p id="message"></p>
+</div>
 
-    <p class="hint">Dica: clique (ou toque) nos balões antes que sumam!</p>
-  </header>
+<script>
+    let secretNumber = Math.floor(Math.random() * 10) + 1;
 
-  <main>
-    <div id="game" class="game" aria-label="Área do jogo"></div>
+    function checkGuess() {
+        let guess = document.getElementById("guess").value;
+        let message = document.getElementById("message");
 
-    <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
-      <div class="card">
-        <h2 id="endTitle">Fim de jogo!</h2>
-        <p>Você fez <b><span id="finalScore">0</span></b> pontos.</p>
-        <p class="small">Recorde: <b><span id="bestScore">0</span></b></p>
-        <button id="playAgainBtn">Jogar novamente</button>
-      </div>
-    </div>
-  </main>
+        if (guess == secretNumber) {
+            message.innerHTML = "🎉 Parabéns! Você acertou!";
+            message.style.color = "green";
+        } else if (guess < secretNumber) {
+            message.innerHTML = "📉 Muito baixo! Tente um número maior.";
+            message.style.color = "blue";
+        } else {
+            message.innerHTML = "📈 Muito alto! Tente um número menor.";
+            message.style.color = "orange";
+        }
+    }
+</script>
 
-  <footer class="footer">
-    <span>Feito em JavaScript • pronto para GitHub Pages</span>
-  </footer>
-
-  <script src="game.js"></script>
 </body>
 </html>
