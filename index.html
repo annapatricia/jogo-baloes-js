@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Estoure os Balões 🎈</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="top">
+    <h1>Estoure os Balões 🎈</h1>
+
+    <div class="hud">
+      <div class="pill">Pontos: <span id="score">0</span></div>
+      <div class="pill">Tempo: <span id="time">30</span>s</div>
+      <div class="pill">Nível: <span id="level">1</span></div>
+    </div>
+
+    <div class="controls">
+      <button id="startBtn">Começar</button>
+      <button id="pauseBtn" disabled>Pausar</button>
+      <button id="resetBtn">Reiniciar</button>
+
+      <label class="toggle">
+        <input type="checkbox" id="soundToggle" checked />
+        <span>Som</span>
+      </label>
+    </div>
+
+    <p class="hint">Dica: clique (ou toque) nos balões antes que sumam!</p>
+  </header>
+
+  <main>
+    <div id="game" class="game" aria-label="Área do jogo"></div>
+
+    <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
+      <div class="card">
+        <h2 id="endTitle">Fim de jogo!</h2>
+        <p>Você fez <b><span id="finalScore">0</span></b> pontos.</p>
+        <p class="small">Recorde: <b><span id="bestScore">0</span></b></p>
+        <button id="playAgainBtn">Jogar novamente</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>Feito em JavaScript • pronto para GitHub Pages</span>
+  </footer>
+
+  <script src="game.js"></script>
+</body>
+</html>
