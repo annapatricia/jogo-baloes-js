@@ -17,3 +17,10 @@ Depois de ativar o Pages, acesse pelo link que o GitHub gerar.
 - HTML
 - CSS
 - JavaScript (vanilla)
+
+- ## 🎮 Preview do Jogo
+
+![Preview do jogo](assets/baloes.png)
+👉 **[Clique aqui para jogar 🎈](https://annapatricia.github.io/jogo-baloes-js/)**
+
+
